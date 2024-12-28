@@ -1,2 +1,2 @@
-# remove self-signed certs
-/nginx
+# SSL certificates (do not commit private keys and certificates)
+nginx/ssl/
