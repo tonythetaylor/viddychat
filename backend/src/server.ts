@@ -7,9 +7,20 @@ import { ENV } from './config/environment';
 
 const PORT = process.env.PORT || 5005;
 
-const sslOptions = loadSSLCertificates();
+// const sslOptions = loadSSLCertificates();
+if (process.env.NODE_ENV !== 'production') {
+    const sslOptions = loadSSLCertificates();
+    https.createServer(sslOptions, app).listen(5005, () => {
+        console.log('Server running on HTTPS');
+    });
+} else {
+    app.listen(5005, () => {
+        console.log('Server running on HTTP');
+    });
+}
 
-const server = https.createServer(sslOptions, app);
+const server = https.createServer(app);
+// const server = https.createServer(sslOptions, app);
 
 initializeSocket(server);
 
