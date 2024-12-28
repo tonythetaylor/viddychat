@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend  # Assuming the backend Dockerfile is in the "backend" directory
+    container_name: backend
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=mysecretpassword
+      - DB_NAME=mydatabase
+    ports:
+      - "5005:5005"
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: ./frontend  # Assuming the frontend Dockerfile is in the "frontend" directory
+    container_name: frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_DB=mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/build:/usr/share/nginx/html
+      - ./nginx/ssl/server.cert:/etc/ssl/certs/server.cert
+      - ./nginx/ssl/server.key:/etc/ssl/private/server.key
+    ports:
+      - "443:443"
+      - "80:80"
+    depends_on:
+      - frontend
+    environment:
+      - NGINX_HOST=localhost
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    external:
+      name: chatnetwork
