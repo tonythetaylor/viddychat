@@ -6,7 +6,13 @@
     "lib": ["dom","ES6"],
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"], // Add custom type declarations
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src/**/*.ts"], // Ensure all TypeScript files in the project are included
+  "exclude": ["node_modules"]
 }

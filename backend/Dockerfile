@@ -1,21 +1,23 @@
-# Use the official Node.js image as the base image
-FROM node:16
+# Use the official Node.js 16 image
+FROM node:18
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
+# Copy package.json and package-lock.json
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Copy the rest of the backend code
+# Copy the rest of the application code
 COPY . .
 
-# Build the application (if necessary)
-RUN npm run build
-
-# Expose the port the app will run on
+# Expose port 5000
 EXPOSE 5005
 
-# Command to run the backend server
-CMD ["npm", "start"]
+# Set environment variables
+ENV PORT=5005
+
+# Generate Prisma client and start the server
+CMD ["sh", "-c", "npx prisma generate && npx prisma migrate deploy && npm run start"]

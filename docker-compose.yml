@@ -4,42 +4,41 @@ services:
   backend:
     build:
       context: ./backend  # Assuming the backend Dockerfile is in the "backend" directory
-    container_name: backend
     environment:
-      - NODE_ENV=production
-      - DB_HOST=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=mysecretpassword
-      - DB_NAME=mydatabase
+      # - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/viddychat
     ports:
       - "5005:5005"
     depends_on:
       - postgres
+    networks:
+      - chatnetwork
 
   frontend:
     build:
       context: ./frontend  # Assuming the frontend Dockerfile is in the "frontend" directory
-    container_name: frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
+    networks:
+      - chatnetwork
 
   postgres:
     image: postgres:13
-    container_name: postgres
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=mysecretpassword
-      - POSTGRES_DB=mydatabase
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=viddychat
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - chatnetwork
 
   nginx:
     image: nginx:alpine
-    container_name: nginx
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./frontend/build:/usr/share/nginx/html
@@ -52,11 +51,11 @@ services:
       - frontend
     environment:
       - NGINX_HOST=localhost
+    networks:
+      - chatnetwork
 
 volumes:
   postgres_data:
 
 networks:
-  default:
-    external:
-      name: chatnetwork
+  chatnetwork:

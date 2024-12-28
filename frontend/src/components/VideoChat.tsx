@@ -6,8 +6,8 @@ import { Rnd } from 'react-rnd';
 
 const apiUri = process.env.REACT_APP_API_URI;
 
-// const SOCKET_SERVER_URL = 'https://192.168.1.30:5005'; // Ensure this is correct and accessible
-const SOCKET_SERVER_URL = apiUri;
+const SOCKET_SERVER_URL = 'https://localhost:5005'; // Ensure this is correct and accessible
+// const SOCKET_SERVER_URL = apiUri;
 
 interface User {
   socketId: string;
